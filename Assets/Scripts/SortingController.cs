@@ -34,10 +34,20 @@ public class SortingController : MonoBehaviour
             else
             {
                 Debug.Log("[SortingController] Non-metal waste, continue to Pos2");
+                // Resume belt in both cases
+                belt.StartMoving();
+
             }
 
-            // Resume belt in both cases
-            belt.StartMoving();
+            
         }
+
+        if (pos == Position.Pos2)
+        {
+            belt.StopMoving();
+            Debug.Log("[SortingController] Belt stopped at Pos2");
+        }
+
+
     }
 }
