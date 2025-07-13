@@ -22,11 +22,27 @@ public class Flapper : MonoBehaviour
     /// Called by SortingController to start the eject animation
     /// and register which object to push.
     /// </summary>
-    public void Eject(GameObject waste)
+    public void Eject(GameObject waste, string flapperName)
     {
         Debug.Log($"[Flapper] Ejecting {waste.name}");
         _pendingWaste = waste;
-        _anim.SetTrigger("firstFlapperON");
+
+        // 1) Clear any old triggers so they can’t conflict
+        _anim.ResetTrigger("firstFlapperON");
+        _anim.ResetTrigger("secondFlapperON");
+
+        // 2) Now fire *only* the one you requested
+        if (flapperName == "first")
+        {
+            Debug.Log($"[Flapper] first flapper");
+            _anim.SetTrigger("firstFlapperON");
+        }    
+        else if (flapperName == "second")
+        {
+            Debug.Log($"[Flapper] second flapper");
+            _anim.SetTrigger("secondFlapperON");
+        }    
+        
     }
 
     /// <summary>
