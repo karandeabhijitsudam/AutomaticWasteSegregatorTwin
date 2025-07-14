@@ -3,7 +3,27 @@ guid: ed51541f0bb495348be7cb7c03f407c1
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Belt
+    second: {fileID: 2100000, guid: 56f375439c6d1954282898e2b760abe6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Belt.002
+    second: {fileID: 2100000, guid: 292f9c7f3fd7a5649bf237d373b7434a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Conveyor
+    second: {fileID: 2100000, guid: 8106a9a1f9a5cfa46852da7a7bf0bdf9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Conveyor.002
+    second: {fileID: 2100000, guid: baacba595b3037045bafba9be9235c47, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
