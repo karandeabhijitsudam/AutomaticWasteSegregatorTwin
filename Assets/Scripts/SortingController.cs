@@ -1,5 +1,8 @@
 // SortingController.cs
 using UnityEngine;
+using TMPro;
+
+
 
 public class SortingController : MonoBehaviour
 {
@@ -19,9 +22,13 @@ public class SortingController : MonoBehaviour
     [Tooltip("Drag your HumiditySensor component here")]
     public HumiditySensor humiditySensor;  
 
+    [Tooltip("UI Text to display current waste type")]
+    public TMP_Text wasteTypeText;  // if using TextMeshPro
+
     // State for the current item
     private GameObject _currentWaste;
     private WasteType  _currentType;
+    private string wasteType;
 
     
 
@@ -58,6 +65,8 @@ public class SortingController : MonoBehaviour
             if (isMetal)
             {
                 Debug.Log("[SortingController] Metal detected");
+                wasteType = "Metal Waste";
+                
                 firstFlapper.Eject(waste, "first");
                 Debug.Log("[SortingController] Metal waste ejected");
                 Reset();
@@ -69,6 +78,8 @@ public class SortingController : MonoBehaviour
                 belt.StartMoving();
 
             }
+
+            wasteTypeText.text = $"Waste Type: "+ wasteType;
 
             
         }
@@ -86,11 +97,14 @@ public class SortingController : MonoBehaviour
             if (isDry)
             {
                 Debug.Log("[SortingController] Dry detected — heading to Pos3");
+                wasteType = "Dry Waste";
                 //belt.StartMoving();
             }
             else
             {
                 Debug.Log("[SortingController] Wet detected — heading to end bin");
+                wasteType = "Wet Waste";
+                
                 //belt.StartMoving(); 
                 // you can catch PosEnd in its own branch later
             }
@@ -98,6 +112,7 @@ public class SortingController : MonoBehaviour
             // Subscribe to be notified when Raise finishes
             box.RaisedComplete += OnBoxRaised;
             box.Raise();
+            wasteTypeText.text = $"Waste Type: " + wasteType;
             //belt.StartMoving();
         }
         // POS3: only stop if it’s dry

@@ -56,6 +56,11 @@ public class ConveyorBelt : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+        
+    }
+
     void FixedUpdate()
     {
         if (!_isMoving) return;
