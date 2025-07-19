@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class ConveyorBelt : MonoBehaviour
@@ -15,6 +16,12 @@ public class ConveyorBelt : MonoBehaviour
     [Tooltip("World units from start at which waste should fall off")]
     public float conveyorLength = 1.25f;
 
+    public WasteSelectorUI wasteSelectorUI;  // Reference to your WasteSelectorUI script
+    public TextMeshProUGUI resultText;
+
+    private Vector3 initialWastePosition;
+    private Quaternion initialWasteRotation;
+
     // Fired when the belt has moved ≥ conveyorLength while running
     public event Action OnEndReached;
 
@@ -23,6 +30,15 @@ public class ConveyorBelt : MonoBehaviour
     bool      _isMoving = false;
     private float     _movedDistance;
     private Vector3   _startPos;
+
+
+    void Start()
+    {
+        // Store the initial position/rotation of the default active waste
+        var currentWaste = wasteSelectorUI.GetCurrentWasteObject();
+        initialWastePosition = currentWaste.transform.position;
+        initialWasteRotation = currentWaste.transform.rotation;
+    }
 
     void Awake()
     {
@@ -35,9 +51,21 @@ public class ConveyorBelt : MonoBehaviour
         _startPos    = transform.position;
     }
 
+    public void SetInitialWasteTransform()
+    {
+        var currentWaste = wasteSelectorUI.GetCurrentWasteObject();
+        if (currentWaste != null)
+        {
+            initialWastePosition = currentWaste.transform.position;
+            initialWasteRotation = currentWaste.transform.rotation;
+        }
+    }
+
+
     /// <summary>Begin continuous belt motion.</summary>
     public void StartMoving()
     {
+        Debug.Log("[ConveyorBelt] DDDD");
         if (!_isMoving)
         {
             _isMoving = true;
@@ -54,11 +82,6 @@ public class ConveyorBelt : MonoBehaviour
             _isMoving = false;
             Debug.Log("[ConveyorBelt] StopMoving()");
         }
-    }
-
-    public void Reset()
-    {
-        
     }
 
     void FixedUpdate()
@@ -89,5 +112,31 @@ public class ConveyorBelt : MonoBehaviour
         transform.position  = _startPos;
         _movedDistance      = 0f;
         Debug.Log("[ConveyorBelt] ResetPosition()");
+    }
+
+    public void ResetConveyor()
+    {
+        Debug.Log("Resetting Conveyor…");
+
+        var currentWaste = wasteSelectorUI.GetCurrentWasteObject();
+
+        if (currentWaste != null)
+        {
+            currentWaste.transform.position = initialWastePosition;
+            currentWaste.transform.rotation = initialWasteRotation;
+
+            var rb = currentWaste.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true;
+            }
+        }
+
+        resultText.text = "";
+        ResetPosition();
+
+        Debug.Log("Reset complete.");
     }
 }

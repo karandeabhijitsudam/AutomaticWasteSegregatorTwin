@@ -31,8 +31,6 @@ public class SortingController : MonoBehaviour
     private string wasteType;
 
     
-
-
     void OnEnable()
     {
         belt.OnEndReached += HandleEndReached;
@@ -69,7 +67,6 @@ public class SortingController : MonoBehaviour
                 
                 firstFlapper.Eject(waste, "first");
                 Debug.Log("[SortingController] Metal waste ejected");
-                Reset();
             }
             else
             {
@@ -98,22 +95,19 @@ public class SortingController : MonoBehaviour
             {
                 Debug.Log("[SortingController] Dry detected — heading to Pos3");
                 wasteType = "Dry Waste";
-                //belt.StartMoving();
             }
             else
             {
                 Debug.Log("[SortingController] Wet detected — heading to end bin");
                 wasteType = "Wet Waste";
                 
-                //belt.StartMoving(); 
-                // you can catch PosEnd in its own branch later
             }
 
             // Subscribe to be notified when Raise finishes
             box.RaisedComplete += OnBoxRaised;
             box.Raise();
             wasteTypeText.text = $"Waste Type: " + wasteType;
-            //belt.StartMoving();
+
         }
         // POS3: only stop if it’s dry
         else if (pos == Position.Pos3 && waste == _currentWaste && _currentType == WasteType.Dry)
@@ -122,10 +116,7 @@ public class SortingController : MonoBehaviour
             Debug.Log("[SortingController] Belt stopped at Pos3");
 
             secondFlapper.Eject(waste, "second");
-
         }
-
-
     }
 
     private void OnBoxRaised()
@@ -135,13 +126,6 @@ public class SortingController : MonoBehaviour
 
         Debug.Log("[SortingController] Box raise complete — restarting belt");
         belt.StartMoving();
-
-        // if (_currentType == WasteType.Dry)
-        // {
-        //     // after dry eject we should clean up
-        //     Reset();
-        // }
-        // if wet, Reset() could also be called when it leaves the End sensor
     }
 
     private void HandleEndReached()
@@ -155,18 +139,47 @@ public class SortingController : MonoBehaviour
 
             // turn off the belt gameobject so it no longer carries the waste
             belt.gameObject.SetActive(false);
-
-            Reset();
         }
     }
 
     private void Reset()
     {
-        _currentWaste = null;
         belt.ResetPosition();
         belt.gameObject.SetActive(true);
         Debug.Log("[Controller] Reset to Idle");
     }
 
 
+    public void ResetProcess()
+    {
+        Debug.Log("[Controller] Resetting process…");
+
+        if (_currentWaste != null)
+        {
+            _currentWaste.transform.position = new Vector3(-0.85f, 1.1f, 0f);
+            _currentWaste.transform.rotation = Quaternion.identity;
+
+            var rb = _currentWaste.GetComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                rb.isKinematic = false; // re-enable physics
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+
+        }
+
+        if (wasteTypeText != null)
+            wasteTypeText.text = "Waste Type: ";
+
+        belt.ResetPosition();
+        belt.gameObject.SetActive(true);
+
+        _currentWaste = null;
+        _currentType = WasteType.Unknown;
+        wasteType = "";
+
+        Debug.Log("[Controller] Process reset complete.");
+    }
 }
